@@ -1,0 +1,78 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "gf779464/linksweep"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn extract_anchors(String) -> Array[String]
+
+pub fn extract_links(String) -> Array[Link]
+
+pub fn render_json(String, Array[Finding], Int) -> String
+
+pub fn render_text(String, Array[Finding], Int) -> String
+
+pub fn slugify_heading(String) -> String
+
+pub fn summarize(Array[Finding], total_occurrences? : Int) -> Summary
+
+pub fn unique_links(Array[Link]) -> Array[Link]
+
+// Errors
+
+// Types and methods
+pub(all) enum CheckState {
+  Ok
+  Broken
+  External
+  Skipped
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Finding {
+  link : Link
+  state : CheckState
+  message : String
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Link {
+  target : String
+  line : Int
+  column : Int
+  kind : LinkKind
+  source : LinkSource
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) enum LinkKind {
+  Web
+  Local
+  Anchor
+  Email
+  Other
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) enum LinkSource {
+  Markdown
+  Html
+  BareUrl
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct ScanReport {
+  file : String
+  findings : Array[Finding]
+  summary : Summary
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Summary {
+  total : Int
+  unique : Int
+  ok : Int
+  broken : Int
+  external : Int
+  skipped : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits

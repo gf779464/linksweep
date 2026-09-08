@@ -1,0 +1,84 @@
+///|
+pub fn summarize(
+  findings : Array[Finding],
+  total_occurrences? : Int = -1,
+) -> Summary {
+  let mut ok = 0
+  let mut broken = 0
+  let mut external = 0
+  let mut skipped = 0
+  for finding in findings {
+    match finding.state {
+      Ok => ok = ok + 1
+      Broken => broken = broken + 1
+      External => external = external + 1
+      Skipped => skipped = skipped + 1
+    }
+  }
+  {
+    total: if total_occurrences < 0 {
+      findings.length()
+    } else {
+      total_occurrences
+    },
+    unique: findings.length(),
+    ok,
+    broken,
+    external,
+    skipped,
+  }
+}
+
+///|
+fn state_label(state : CheckState) -> String {
+  match state {
+    Ok => "OK"
+    Broken => "ERROR"
+    External => "WEB"
+    Skipped => "SKIP"
+  }
+}
+
+///|
+pub fn render_text(
+  file : String,
+  findings : Array[Finding],
+  total : Int,
+) -> String {
+  let buffer = StringBuilder()
+  for finding in findings {
+    buffer.write_string(file)
+    buffer.write_string(":")
+    buffer.write_string(finding.link.line.to_string())
+    buffer.write_string(":")
+    buffer.write_string(finding.link.column.to_string())
+    buffer.write_string("  ")
+    buffer.write_string(state_label(finding.state))
+    buffer.write_string("  ")
+    buffer.write_string(finding.link.target)
+    if finding.message != "" {
+      buffer.write_string(" — ")
+      buffer.write_string(finding.message)
+    }
+    buffer.write_char('\n')
+  }
+  let summary = summarize(findings, total_occurrences=total)
+  buffer.write_string(
+    "\nChecked \{summary.total} references (\{summary.unique} unique): \{summary.ok} passed, \{summary.broken} broken, \{summary.external} web unchecked, \{summary.skipped} skipped\n",
+  )
+  buffer.to_string()
+}
+
+///|
+pub fn render_json(
+  file : String,
+  findings : Array[Finding],
+  total : Int,
+) -> String {
+  let report : ScanReport = {
+    file,
+    findings,
+    summary: summarize(findings, total_occurrences=total),
+  }
+  @json.to_json(report).stringify(indent=2)
+}

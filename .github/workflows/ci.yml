@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hustcer/setup-moonbit@v1
+      - run: moon update
+      - run: moon check --target native
+      - run: moon test --target native
+      - run: moon fmt --check
+      - run: moon run cmd/linksweep --target native -- examples/demo --offline
