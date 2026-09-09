@@ -85,7 +85,9 @@ is also executed in CI so the documented command cannot silently drift.
 
 The project is an independent MoonBit implementation inspired by established link checkers such as [Markup Link Checker](https://github.com/becheran/mlc). Compatibility work will be documented with fixtures and behavioral comparisons. No source code is copied from the reference implementation.
 
-See `ARCHITECTURE.md`, `COMPATIBILITY.md`, and `ROADMAP.md` for engineering boundaries and competition milestones.
+See `ARCHITECTURE.md`, `COMPATIBILITY.md`, `ROADMAP.md`, and `CHANGELOG.md`
+for engineering boundaries, provenance, competition milestones, and a dated
+record of user-visible changes.
 
 ## Release build
 
