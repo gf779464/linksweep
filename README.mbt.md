@@ -22,7 +22,9 @@ Version 0.1 provides an end-to-end scan:
 
 Generated directories such as `.git`, `.mooncakes`, `_build`, `node_modules`, and `testdata` are skipped during recursive scans.
 
-Recursive directory scanning, configuration files, redirects, timeouts, and machine-readable reports are subsequent competition milestones.
+The current release already includes recursive directory scanning, a 10-second
+network timeout, and JSON output. Configuration files, retry policies, redirect
+following, and additional report formats remain future milestones.
 
 ## Run
 
@@ -61,6 +63,23 @@ Exit codes:
 - fenced code blocks are excluded from link extraction.
 
 Current limitations are explicit: HTML attributes must be quoted, redirects are reported by their first response, and GitHub-style anchor normalization is implemented for common headings rather than every Unicode edge case.
+
+## Verification
+
+The repository runs the following checks on both Ubuntu and Windows for every
+push and pull request:
+
+```shell
+moon update
+moon check --target native
+moon test --target native
+moon fmt --check
+moon run cmd/linksweep --target native -- examples/demo --offline
+```
+
+The current test suite contains 17 deterministic tests covering extraction,
+classification, local references, and heading anchors. The demonstration scan
+is also executed in CI so the documented command cannot silently drift.
 
 ## Project direction
 
