@@ -5,6 +5,12 @@ Keep a Changelog structure and uses semantic versioning for published releases.
 
 ## [Unreleased]
 
+### Added
+
+- cross-platform release packaging for tagged versions;
+- black-box CI smoke tests for the native executable's version, successful
+  scan, and broken-link exit status.
+
 ### Planned
 
 - configurable include and exclude patterns;

@@ -18,3 +18,26 @@ jobs:
       - run: moon test --target native
       - run: moon fmt --check
       - run: moon run cmd/linksweep --target native -- examples/demo --offline
+      - run: moon build --target native --release cmd/linksweep
+      - name: Smoke-test release binary on Unix
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          binary=_build/native/release/build/cmd/linksweep/linksweep.exe
+          test "$("$binary" --version)" = "LinkSweep 0.1.0"
+          "$binary" examples/demo --offline
+          if "$binary" testdata/broken.md --offline; then
+            echo "expected broken fixture to return a non-zero status"
+            exit 1
+          fi
+      - name: Smoke-test release binary on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $binary = '_build/native/release/build/cmd/linksweep/linksweep.exe'
+          $version = & $binary --version
+          if ($version -ne 'LinkSweep 0.1.0') { throw "unexpected version: $version" }
+          & $binary examples/demo --offline
+          if ($LASTEXITCODE -ne 0) { throw 'demo scan failed' }
+          & $binary testdata/broken.md --offline
+          if ($LASTEXITCODE -eq 0) { throw 'broken fixture unexpectedly passed' }

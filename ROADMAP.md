@@ -34,7 +34,7 @@ Remaining refinement: honor arbitrary `.gitignore` and user exclude patterns.
 
 - JSON, CSV, and GitHub Actions report formats
 - `.linksweep.json` configuration
-- black-box CLI tests and behavioral comparison fixtures
+- behavioral comparison fixtures
 - release binaries for Windows, Linux, and macOS
 - publish the library and CLI to Mooncakes
 
@@ -44,4 +44,5 @@ Remaining refinement: honor arbitrary `.gitignore` and user exclude patterns.
 - every public behavior has deterministic tests
 - failures produce clean diagnostics and non-zero exit codes
 - README examples are executed in CI
+- release binaries pass black-box version, success, and failure-path smoke tests
 - reference projects and licenses are documented
