@@ -97,6 +97,11 @@ moon build --target native --release cmd/linksweep
 
 On Windows the executable is generated at `_build/native/release/build/cmd/linksweep/linksweep.exe`.
 
+Pushing a version tag such as `v0.1.0` runs the release workflow on Windows and
+Ubuntu, executes the test suite, builds both native binaries, and attaches them
+to a GitHub Release. The workflow can also be run manually to verify packaging
+without publishing a release.
+
 ## License
 
 Apache-2.0. See `LICENSE`.
