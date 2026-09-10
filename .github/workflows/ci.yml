@@ -39,5 +39,5 @@ jobs:
           if ($version -ne 'LinkSweep 0.1.0') { throw "unexpected version: $version" }
           & $binary examples/demo --offline
           if ($LASTEXITCODE -ne 0) { throw 'demo scan failed' }
-          & $binary testdata/broken.md --offline
-          if ($LASTEXITCODE -eq 0) { throw 'broken fixture unexpectedly passed' }
+          $broken = Start-Process -FilePath $binary -ArgumentList 'testdata/broken.md', '--offline' -Wait -PassThru -NoNewWindow
+          if ($broken.ExitCode -eq 0) { throw 'broken fixture unexpectedly passed' }
