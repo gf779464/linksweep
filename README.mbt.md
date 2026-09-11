@@ -17,7 +17,7 @@ Version 0.1 provides an end-to-end scan:
 - checks HTTP/HTTPS status codes unless `--offline` is used;
 - validates same-document and cross-document heading anchors;
 - recursively scans `.md`, `.markdown`, `.html`, and `.htm` files;
-- emits human-readable text, structured JSON, or CSV;
+- emits human-readable text, structured JSON, CSV, or GitHub annotations;
 - produces a line-and-column report and fails on broken local references.
 
 Generated directories such as `.git`, `.mooncakes`, `_build`, `node_modules`, and `testdata` are skipped during recursive scans.
@@ -38,6 +38,7 @@ moon run cmd/linksweep -- README.mbt.md --offline
 moon run cmd/linksweep -- examples/demo --offline
 moon run cmd/linksweep -- examples/demo --offline --json
 moon run cmd/linksweep -- examples/demo --offline --csv
+moon run cmd/linksweep -- testdata/broken.md --offline --github
 moon run cmd/linksweep -- ./docs --offline --exclude=vendor --exclude=generated
 moon run cmd/linksweep -- README.mbt.md --timeout-ms=5000
 ```
@@ -64,6 +65,9 @@ milliseconds. It defaults to 10000 and has no effect in offline mode.
 `--json` emits complete scan reports for automation. `--csv` emits one finding
 per row using the columns `file,line,column,state,target,message`; the two
 formats are mutually exclusive.
+
+`--github` emits each broken link as an `::error` workflow command with its
+file, line, and column. GitHub Actions displays these directly as annotations.
 
 ## Supported syntax
 

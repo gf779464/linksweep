@@ -107,3 +107,37 @@ pub fn render_csv(file : String, findings : Array[Finding]) -> String {
   }
   buffer.to_string()
 }
+
+///|
+fn github_escape(value : String, property : Bool) -> String {
+  let escaped = value
+    .replace_all(old="%", new="%25")
+    .replace_all(old="\r", new="%0D")
+    .replace_all(old="\n", new="%0A")
+  if property {
+    escaped.replace_all(old=",", new="%2C").replace_all(old=":", new="%3A")
+  } else {
+    escaped
+  }
+}
+
+///|
+pub fn render_github(file : String, findings : Array[Finding]) -> String {
+  let buffer = StringBuilder()
+  for finding in findings {
+    if finding.state == Broken {
+      buffer.write_string("::error file=")
+      buffer.write_string(github_escape(file, true))
+      buffer.write_string(",line=")
+      buffer.write_string(finding.link.line.to_string())
+      buffer.write_string(",col=")
+      buffer.write_string(finding.link.column.to_string())
+      buffer.write_string("::")
+      buffer.write_string(github_escape(finding.message, false))
+      buffer.write_string(" — ")
+      buffer.write_string(github_escape(finding.link.target, false))
+      buffer.write_char('\n')
+    }
+  }
+  buffer.to_string()
+}

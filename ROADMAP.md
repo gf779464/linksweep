@@ -32,7 +32,6 @@ Remaining refinement: honor arbitrary `.gitignore` and user exclude patterns.
 
 ## Milestone 4: automation and release
 
-- GitHub Actions report format
 - `.linksweep.json` configuration
 - behavioral comparison fixtures
 - release binaries for Windows, Linux, and macOS

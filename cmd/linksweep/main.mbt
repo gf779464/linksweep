@@ -4,12 +4,13 @@ fn usage() -> Unit {
     #|LinkSweep — find and verify links in Markdown and HTML
     #|
     #|Usage:
-    #|  moon run cmd/linksweep -- <file-or-directory> [--offline] [--json|--csv] [--exclude=NAME] [--timeout-ms=N]
+    #|  moon run cmd/linksweep -- <file-or-directory> [--offline] [--json|--csv|--github] [--exclude=NAME] [--timeout-ms=N]
     #|
     #|Options:
     #|  --offline  Do not access HTTP/HTTPS links
     #|  --json     Emit a JSON array instead of the text report
     #|  --csv      Emit CSV findings instead of the text report
+    #|  --github   Emit broken links as GitHub Actions annotations
     #|  --exclude=NAME Skip a directory by its exact name (repeatable)
     #|  --timeout-ms=N HTTP request timeout in milliseconds (default: 10000)
     #|  -V, --version Show the LinkSweep version
@@ -219,13 +220,17 @@ async fn main {
   let offline = args.any(fn(arg) { arg == "--offline" })
   let json_output = args.any(fn(arg) { arg == "--json" })
   let csv_output = args.any(fn(arg) { arg == "--csv" })
+  let github_output = args.any(fn(arg) { arg == "--github" })
   let excludes : Array[String] = []
   let mut timeout_ms = 10000
   let mut input : String? = None
   let mut invalid : String? = None
   for i = 1; i < args.length(); i = i + 1 {
     let arg = args[i]
-    if arg == "--offline" || arg == "--json" || arg == "--csv" {
+    if arg == "--offline" ||
+      arg == "--json" ||
+      arg == "--csv" ||
+      arg == "--github" {
       continue
     } else if arg.has_prefix("--exclude=") {
       let name = arg[10:].to_owned()
@@ -256,8 +261,11 @@ async fn main {
     }
     None => ()
   }
-  if json_output && csv_output {
-    println("Choose only one report format: --json or --csv")
+  let formats = (if json_output { 1 } else { 0 }) +
+    (if csv_output { 1 } else { 0 }) +
+    (if github_output { 1 } else { 0 })
+  if formats > 1 {
+    println("Choose only one report format: --json, --csv, or --github")
     @sys.exit(2)
     return
   }
@@ -295,6 +303,12 @@ async fn main {
     output.write_string("file,line,column,state,target,message\n")
     for report in reports {
       output.write_string(@core.render_csv(report.file, report.findings))
+    }
+    println(output.to_string())
+  } else if github_output {
+    let output = StringBuilder()
+    for report in reports {
+      output.write_string(@core.render_github(report.file, report.findings))
     }
     println(output.to_string())
   } else {

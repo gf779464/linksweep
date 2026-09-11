@@ -13,6 +13,7 @@ Keep a Changelog structure and uses semantic versioning for published releases.
 - repeatable `--exclude=NAME` directory exclusions for repository scans.
 - configurable per-request HTTP timeouts through `--timeout-ms=N`.
 - RFC-compatible quoted CSV findings through `--csv`.
+- source-positioned GitHub Actions error annotations through `--github`.
 
 ### Planned
 
