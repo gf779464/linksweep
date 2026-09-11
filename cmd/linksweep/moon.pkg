@@ -2,6 +2,7 @@ import {
   "gf779464/linksweep" @core,
   "moonbitlang/core/env",
   "moonbitlang/core/json",
+  "moonbitlang/core/string",
   "moonbitlang/async",
   "moonbitlang/async/http",
   "moonbitlang/x/fs",

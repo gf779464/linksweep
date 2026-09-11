@@ -25,7 +25,7 @@ Remaining refinement: honor arbitrary `.gitignore` and user exclude patterns.
 ## Milestone 3: reliable network checks
 
 - bounded concurrency and per-host throttling
-- configurable timeout and retry policy
+- configurable retry policy
 - redirect following and redirect warnings
 - HEAD-first strategy with GET fallback
 - response cache for repeat scans

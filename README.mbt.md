@@ -22,7 +22,7 @@ Version 0.1 provides an end-to-end scan:
 
 Generated directories such as `.git`, `.mooncakes`, `_build`, `node_modules`, and `testdata` are skipped during recursive scans.
 
-The current release already includes recursive directory scanning, a 10-second
+The current release already includes recursive directory scanning, a configurable
 network timeout, and JSON output. Configuration files, retry policies, redirect
 following, and additional report formats remain future milestones.
 
@@ -38,6 +38,7 @@ moon run cmd/linksweep -- README.mbt.md --offline
 moon run cmd/linksweep -- examples/demo --offline
 moon run cmd/linksweep -- examples/demo --offline --json
 moon run cmd/linksweep -- ./docs --offline --exclude=vendor --exclude=generated
+moon run cmd/linksweep -- README.mbt.md --timeout-ms=5000
 ```
 
 Options may appear before or after the input path:
@@ -55,6 +56,9 @@ Exit codes:
 
 `--exclude=NAME` skips directories whose exact name matches `NAME`; the option
 may be repeated. Generated directories are still excluded automatically.
+
+`--timeout-ms=N` sets the timeout for each HTTP request to a positive number of
+milliseconds. It defaults to 10000 and has no effect in offline mode.
 
 ## Supported syntax
 

@@ -21,6 +21,14 @@ test "custom directory exclusions use exact names" {
 }
 
 ///|
+test "HTTP timeout accepts only positive milliseconds" {
+  assert_eq(parse_positive_int("2500"), Some(2500))
+  assert_eq(parse_positive_int("0"), None)
+  assert_eq(parse_positive_int("-5"), None)
+  assert_eq(parse_positive_int("fast"), None)
+}
+
+///|
 test "fragment parsing" {
   assert_eq(fragment("guide.md#install"), Some("install"))
   assert_eq(fragment("guide.md"), None)

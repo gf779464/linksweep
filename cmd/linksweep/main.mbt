@@ -4,12 +4,13 @@ fn usage() -> Unit {
     #|LinkSweep — find and verify links in Markdown and HTML
     #|
     #|Usage:
-    #|  moon run cmd/linksweep -- <file-or-directory> [--offline] [--json] [--exclude=NAME]
+    #|  moon run cmd/linksweep -- <file-or-directory> [--offline] [--json] [--exclude=NAME] [--timeout-ms=N]
     #|
     #|Options:
     #|  --offline  Do not access HTTP/HTTPS links
     #|  --json     Emit a JSON array instead of the text report
     #|  --exclude=NAME Skip a directory by its exact name (repeatable)
+    #|  --timeout-ms=N HTTP request timeout in milliseconds (default: 10000)
     #|  -V, --version Show the LinkSweep version
     #|  -h, --help Show this help
   println(text)
@@ -93,6 +94,7 @@ async fn check_link(
   source_content : String,
   link : @core.Link,
   offline : Bool,
+  timeout_ms : Int,
 ) -> @core.Finding {
   match link.kind {
     Web =>
@@ -101,14 +103,18 @@ async fn check_link(
       } else {
         try {
           let request_target = without_fragment(link.target)
-          let code = @async.with_timeout_opt(10000, () => {
+          let code = @async.with_timeout_opt(timeout_ms, () => {
             let (response, body) = @http.get_stream(request_target)
             defer body.close()
             response.code
           })
           match code {
             None =>
-              { link, state: Broken, message: "request timed out after 10s", }
+              {
+                link,
+                state: Broken,
+                message: "request timed out after \{timeout_ms}ms",
+              }
             Some(code) if code >= 200 && code < 400 =>
               { link, state: Ok, message: "HTTP \{code}", }
             Some(code) => { link, state: Broken, message: "HTTP \{code}", }
@@ -169,18 +175,32 @@ fn collect_documents(
 }
 
 ///|
-async fn scan_file(file : String, offline : Bool) -> @core.ScanReport {
+async fn scan_file(
+  file : String,
+  offline : Bool,
+  timeout_ms : Int,
+) -> @core.ScanReport {
   let content = @fs.read_file_to_string(file)
   let all = @core.extract_links(content)
   let unique = @core.unique_links(all)
   let findings : Array[@core.Finding] = []
   for link in unique {
-    findings.push(check_link(file, content, link, offline))
+    findings.push(check_link(file, content, link, offline, timeout_ms))
   }
   {
     file,
     findings,
     summary: @core.summarize(findings, total_occurrences=all.length()),
+  }
+}
+
+///|
+fn parse_positive_int(value : String) -> Int? {
+  let parsed = @string.parse_int(value) catch { _ => -1 }
+  if parsed > 0 {
+    Some(parsed)
+  } else {
+    None
   }
 }
 
@@ -198,6 +218,7 @@ async fn main {
   let offline = args.any(fn(arg) { arg == "--offline" })
   let json_output = args.any(fn(arg) { arg == "--json" })
   let excludes : Array[String] = []
+  let mut timeout_ms = 10000
   let mut input : String? = None
   let mut invalid : String? = None
   for i = 1; i < args.length(); i = i + 1 {
@@ -210,6 +231,11 @@ async fn main {
         invalid = Some(arg)
       } else {
         excludes.push(name)
+      }
+    } else if arg.has_prefix("--timeout-ms=") {
+      match parse_positive_int(arg[13:].to_owned()) {
+        Some(value) => timeout_ms = value
+        None => invalid = Some(arg)
       }
     } else if arg.has_prefix("-") {
       invalid = Some(arg)
@@ -246,7 +272,7 @@ async fn main {
   let reports : Array[@core.ScanReport] = []
   let mut unreadable = false
   for file in files {
-    reports.push(scan_file(file, offline)) catch {
+    reports.push(scan_file(file, offline, timeout_ms)) catch {
       _ => {
         unreadable = true
         if !json_output {

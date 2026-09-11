@@ -11,6 +11,7 @@ Keep a Changelog structure and uses semantic versioning for published releases.
 - black-box CI smoke tests for the native executable's version, successful
   scan, and broken-link exit status.
 - repeatable `--exclude=NAME` directory exclusions for repository scans.
+- configurable per-request HTTP timeouts through `--timeout-ms=N`.
 
 ### Planned
 
