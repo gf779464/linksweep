@@ -82,3 +82,28 @@ pub fn render_json(
   }
   @json.to_json(report).stringify(indent=2)
 }
+
+///|
+fn csv_field(value : String) -> String {
+  "\"\{value.replace_all(old="\"", new="\"\"")}\""
+}
+
+///|
+pub fn render_csv(file : String, findings : Array[Finding]) -> String {
+  let buffer = StringBuilder()
+  for finding in findings {
+    buffer.write_string(csv_field(file))
+    buffer.write_string(",")
+    buffer.write_string(finding.link.line.to_string())
+    buffer.write_string(",")
+    buffer.write_string(finding.link.column.to_string())
+    buffer.write_string(",")
+    buffer.write_string(csv_field(state_label(finding.state)))
+    buffer.write_string(",")
+    buffer.write_string(csv_field(finding.link.target))
+    buffer.write_string(",")
+    buffer.write_string(csv_field(finding.message))
+    buffer.write_char('\n')
+  }
+  buffer.to_string()
+}

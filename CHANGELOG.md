@@ -12,6 +12,7 @@ Keep a Changelog structure and uses semantic versioning for published releases.
   scan, and broken-link exit status.
 - repeatable `--exclude=NAME` directory exclusions for repository scans.
 - configurable per-request HTTP timeouts through `--timeout-ms=N`.
+- RFC-compatible quoted CSV findings through `--csv`.
 
 ### Planned
 
