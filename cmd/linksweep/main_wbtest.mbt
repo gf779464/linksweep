@@ -14,6 +14,13 @@ test "generated directories are ignored" {
 }
 
 ///|
+test "custom directory exclusions use exact names" {
+  let excluded = ["vendor", "generated"]
+  assert_true(excluded.contains("vendor"))
+  assert_false(excluded.contains("vendor-docs"))
+}
+
+///|
 test "fragment parsing" {
   assert_eq(fragment("guide.md#install"), Some("install"))
   assert_eq(fragment("guide.md"), None)

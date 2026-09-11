@@ -37,6 +37,7 @@ moon run cmd/linksweep -- README.mbt.md
 moon run cmd/linksweep -- README.mbt.md --offline
 moon run cmd/linksweep -- examples/demo --offline
 moon run cmd/linksweep -- examples/demo --offline --json
+moon run cmd/linksweep -- ./docs --offline --exclude=vendor --exclude=generated
 ```
 
 Options may appear before or after the input path:
@@ -51,6 +52,9 @@ Exit codes:
 - `0`: every checked link passed;
 - `1`: at least one link is broken or a document could not be read;
 - `2`: invalid input or command-line usage.
+
+`--exclude=NAME` skips directories whose exact name matches `NAME`; the option
+may be repeated. Generated directories are still excluded automatically.
 
 ## Supported syntax
 

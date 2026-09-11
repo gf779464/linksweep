@@ -4,11 +4,12 @@ fn usage() -> Unit {
     #|LinkSweep — find and verify links in Markdown and HTML
     #|
     #|Usage:
-    #|  moon run cmd/main -- <file-or-directory> [--offline] [--json]
+    #|  moon run cmd/linksweep -- <file-or-directory> [--offline] [--json] [--exclude=NAME]
     #|
     #|Options:
     #|  --offline  Do not access HTTP/HTTPS links
     #|  --json     Emit a JSON array instead of the text report
+    #|  --exclude=NAME Skip a directory by its exact name (repeatable)
     #|  -V, --version Show the LinkSweep version
     #|  -h, --help Show this help
   println(text)
@@ -139,7 +140,11 @@ fn ignored_directory(name : String) -> Bool {
 }
 
 ///|
-fn collect_documents(input : String, output : Array[String]) -> Unit {
+fn collect_documents(
+  input : String,
+  output : Array[String],
+  excludes : Array[String],
+) -> Unit {
   let is_file = @fs.is_file(input) catch { _ => false }
   if is_file {
     if is_document(input) {
@@ -154,12 +159,12 @@ fn collect_documents(input : String, output : Array[String]) -> Unit {
   let entries = @fs.read_dir(input) catch { _ => [] }
   entries.sort()
   for entry in entries {
-    if ignored_directory(entry) {
+    if ignored_directory(entry) || excludes.contains(entry) {
       continue
     }
     let base : @path.Path = input
     let child = base.join(entry).normalize().to_string()
-    collect_documents(child, output)
+    collect_documents(child, output, excludes)
   }
 }
 
@@ -192,12 +197,20 @@ async fn main {
   }
   let offline = args.any(fn(arg) { arg == "--offline" })
   let json_output = args.any(fn(arg) { arg == "--json" })
+  let excludes : Array[String] = []
   let mut input : String? = None
   let mut invalid : String? = None
   for i = 1; i < args.length(); i = i + 1 {
     let arg = args[i]
     if arg == "--offline" || arg == "--json" {
       continue
+    } else if arg.has_prefix("--exclude=") {
+      let name = arg[10:].to_owned()
+      if name.is_empty() || name.contains("/") || name.contains("\\") {
+        invalid = Some(arg)
+      } else {
+        excludes.push(name)
+      }
     } else if arg.has_prefix("-") {
       invalid = Some(arg)
     } else if input is None {
@@ -224,7 +237,7 @@ async fn main {
     }
   }
   let files : Array[String] = []
-  collect_documents(input, files)
+  collect_documents(input, files, excludes)
   if files.is_empty() {
     println("No Markdown or HTML files found at: \{input}")
     @sys.exit(2)
