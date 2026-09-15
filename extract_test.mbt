@@ -45,6 +45,16 @@ test "data-href is not treated as href" {
 }
 
 ///|
+test "unquoted HTML href and src attributes are extracted" {
+  let links = extract_links(
+    "<a href=guide.md>Guide</a><img SRC=images/logo.svg>",
+  )
+  assert_true(links.any(fn(link) { link.target == "guide.md" }))
+  assert_true(links.any(fn(link) { link.target == "images/logo.svg" }))
+  assert_true(links.all(fn(link) { link.source == Html }))
+}
+
+///|
 test "non-network URI schemes are classified as other" {
   let links = extract_links("[phone](tel:123) [inline](data:text/plain,hello)")
   assert_true(links.all(fn(link) { link.kind == Other }))

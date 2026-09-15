@@ -15,6 +15,7 @@ Keep a Changelog structure and uses semantic versioning for published releases.
 - RFC-compatible quoted CSV findings through `--csv`.
 - source-positioned GitHub Actions error annotations through `--github`.
 - recursive discovery of `.mdx` documentation files.
+- unquoted HTML `href` and `src` attribute extraction.
 
 ### Planned
 

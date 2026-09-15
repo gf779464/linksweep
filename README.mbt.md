@@ -73,13 +73,15 @@ file, line, and column. GitHub Actions displays these directly as annotations.
 
 - inline Markdown links and images, including destinations in angle brackets;
 - Markdown reference definitions;
-- quoted HTML `href` and `src` attributes;
+- quoted and unquoted HTML `href` and `src` attributes;
 - bare HTTP/HTTPS URLs;
 - ATX headings (`#` through `######`) and duplicate heading suffixes;
 - `mailto:`, `tel:`, `data:`, and `javascript:` classification;
 - fenced code blocks are excluded from link extraction.
 
-Current limitations are explicit: HTML attributes must be quoted, redirects are reported by their first response, and GitHub-style anchor normalization is implemented for common headings rather than every Unicode edge case.
+Current limitations are explicit: redirects are reported by their first response,
+and GitHub-style anchor normalization is implemented for common headings rather
+than every Unicode edge case.
 
 ## Verification
 
@@ -94,7 +96,7 @@ moon fmt --check
 moon run cmd/linksweep --target native -- examples/demo --offline
 ```
 
-The current test suite contains 21 deterministic tests covering extraction,
+The current test suite contains 22 deterministic tests covering extraction,
 classification, local references, and heading anchors. The demonstration scan
 is also executed in CI so the documented command cannot silently drift.
 

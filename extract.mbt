@@ -223,6 +223,22 @@ fn scan_html_attr(
             i = j + 1
             continue
           }
+        } else if j < chars.length() && chars[j] != '>' {
+          let start = j
+          while j < chars.length() && !is_space(chars[j]) && chars[j] != '>' {
+            j = j + 1
+          }
+          if j > start {
+            add_link(
+              out,
+              String::from_array(chars[start:j]),
+              line_no,
+              start + 1,
+              Html,
+            )
+            i = j
+            continue
+          }
         }
       }
     }
