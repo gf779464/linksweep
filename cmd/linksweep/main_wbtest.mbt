@@ -1,6 +1,7 @@
 ///|
 test "document extension matching is case insensitive" {
   assert_true(is_document("README.MD"))
+  assert_true(is_document("component.mdx"))
   assert_true(is_document("page.html"))
   assert_false(is_document("image.png"))
 }

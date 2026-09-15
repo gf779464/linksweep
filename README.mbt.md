@@ -16,7 +16,7 @@ Version 0.1 provides an end-to-end scan:
 - validates local files relative to the source document;
 - checks HTTP/HTTPS status codes unless `--offline` is used;
 - validates same-document and cross-document heading anchors;
-- recursively scans `.md`, `.markdown`, `.html`, and `.htm` files;
+- recursively scans `.md`, `.markdown`, `.mdx`, `.html`, and `.htm` files;
 - emits human-readable text, structured JSON, CSV, or GitHub annotations;
 - produces a line-and-column report and fails on broken local references.
 
@@ -94,7 +94,7 @@ moon fmt --check
 moon run cmd/linksweep --target native -- examples/demo --offline
 ```
 
-The current test suite contains 17 deterministic tests covering extraction,
+The current test suite contains 21 deterministic tests covering extraction,
 classification, local references, and heading anchors. The demonstration scan
 is also executed in CI so the documented command cannot silently drift.
 

@@ -135,7 +135,11 @@ async fn check_link(
 fn is_document(path : String) -> Bool {
   let value : @path.Path = path
   let ext = value.extname().to_owned().to_lower()
-  ext == ".md" || ext == ".markdown" || ext == ".html" || ext == ".htm"
+  ext == ".md" ||
+  ext == ".markdown" ||
+  ext == ".mdx" ||
+  ext == ".html" ||
+  ext == ".htm"
 }
 
 ///|
